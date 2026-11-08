@@ -1,0 +1,74 @@
+{
+  "raw_rows": 2964624,
+  "source_columns": 19,
+  "in_scope_pickups": 2964606,
+  "valid_zone_pickups": 2952588,
+  "old_filtered_in_scope": 2913207,
+  "quality": {
+    "exact_duplicates": 0,
+    "pickup_missing": 0,
+    "pickup_outside_january": 18,
+    "pickup_before_january": 15,
+    "pickup_after_january": 3,
+    "pu_missing": 0,
+    "pu_zero": 0,
+    "pu_outside_study_range": 12018,
+    "pu_special_264_unknown": 10360,
+    "pu_special_265_outside_nyc": 1658,
+    "pu_other_outside_1_265": 0,
+    "do_missing": 0,
+    "do_zero": 0,
+    "do_outside_study_range": 28083,
+    "do_special_264_unknown": 16116,
+    "do_special_265_outside_nyc": 11967,
+    "do_other_outside_1_265": 0,
+    "jan_outside_study_pu": 12018,
+    "duration_nonpositive": 870,
+    "pickup_after_dropoff": 56,
+    "distance_negative": 0,
+    "distance_zero": 60371,
+    "fare_negative": 37448,
+    "total_nonpositive": 35920,
+    "passenger_missing": 140162,
+    "passenger_zero": 31465,
+    "passenger_negative": 0,
+    "passenger_gt_6": 60,
+    "speed_valid_n": 2963754,
+    "speed_gt_80": 1107,
+    "duration_gt_180": 1983,
+    "distance_gt_50": 412,
+    "fare_gt_200": 1070
+  },
+  "unique_pickup_zones": 258,
+  "unique_dropoff_zones": 259,
+  "top10_pickup_share_pct": 39.5425,
+  "top_pickup_zone": 132,
+  "top_pickup_count": 145240,
+  "peak_hour": 18,
+  "peak_hour_count": 212038,
+  "peak_weekday": "Wednesday",
+  "peak_weekday_count": 493093,
+  "peak_date": "2024-01-27",
+  "peak_date_count": 110086,
+  "min_pickup": "2002-12-31 22:59:39",
+  "max_pickup": "2024-02-01 00:01:15",
+  "sample_fare_distance_corr": 0.8136,
+  "sample_distance_duration_corr": 0.2716,
+  "sample_n": 50000,
+  "seed": 20261108
+}
+
+FINAL CORRECTION RUN (same workspace, existing January Parquet):
+COMMAND: python3 -m py_compile scripts/phase1_eda.py scripts/build_phase1_report.py scripts/acquire_data.py
+EXIT: 0
+COMMAND: python3 -m pip install --no-index --find-links pip-unpack-bzrgiwgc pyarrow --quiet
+EXIT: 0
+COMMAND: python3 scripts/phase1_eda.py --input data/yellow_tripdata_2024-01.parquet > outputs/run_log.txt 2>&1
+EXIT: 0 (JSON above is from the final run)
+COMMAND: python3 scripts/build_phase1_report.py
+EXIT: 0
+COMMAND: /usr/bin/pdftoppm -f 1 -l 4 -scale-to 900 -png reports/phase1.pdf tmp/final_corrected
+EXIT: 0
+CHECKS: raw/in-month/study-zone counts; hour, weekday, date and weekday-hour sums; top-10 share; 264/265 special-code decomposition; valid-speed denominator, nonnegative finite summary and >80 count. ALL PASS.
+SPEED BEFORE: unqualified division, 2,963,810 nonmissing; minimum -28,296 mph; >80 mph 1,163.
+SPEED AFTER: finite nonnegative distance and finite strictly positive duration, 2,963,754 valid; minimum 0 mph; >80 mph 1,107. Extreme positive maximum remains a suspicious source anomaly.
